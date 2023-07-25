@@ -2,7 +2,7 @@ import users from '../models/users.js'
 import { StatusCodes } from 'http-status-codes'
 import { getMessageFromValidationError } from '../utils/error.js'
 // 註冊
-export const create = async (req, res) => {
+export const register = async (req, res) => {
   try {
     const result = await users.create(req.body)
     res.status(StatusCodes.OK).json({

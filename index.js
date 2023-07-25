@@ -3,6 +3,7 @@ import express from 'express'
 import mongoose from 'mongoose'
 import { StatusCodes } from 'http-status-codes'
 import mongoSanitize from 'express-mongo-sanitize'
+import { routeUsers } from './routes/users.js'
 import cors from 'cors'
 // passport 還沒寫、狀態碼還沒裝、路由這些還沒寫
 
@@ -39,6 +40,8 @@ app.use((_, req, res, next) => {
 })
 
 app.use(mongoSanitize())
+
+app.use('/users', routeUsers)
 
 // all 代表 get, post, patch ...
 // * 所有路徑的所有請求

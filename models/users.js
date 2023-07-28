@@ -1,7 +1,7 @@
 import { Schema, ObjectId, Error, model } from 'mongoose'
 import validator from 'validator'
 import bcrypt from 'bcrypt'
-import UserRole from '../enums/UserRole'
+import UserRole from '../enums/UserRole.js'
 
 const cartSchema = Schema({
   prooduct: {
@@ -37,7 +37,9 @@ const schema = new Schema({
   // 暱稱
   nickname: {
     type: String,
-    default: `${this.email.split('@')[0]}`
+    default () {
+      return `${this.email.split('@')[0]}`
+    }
   },
   // 頭貼
   avatar: {

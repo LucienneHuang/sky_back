@@ -9,6 +9,6 @@ router.post('/', contentType('application/json'), register)
 router.post('/login', contentType('application/json'), auth.login, login)
 router.delete('/logout', auth.jwt, logout)
 router.patch('/extend', auth.jwt, extend)
-router.get('/me', auth.jwt, getProfile)
+router.get('/profile', auth.jwt, getProfile)
 
 export default router

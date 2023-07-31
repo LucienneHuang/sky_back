@@ -30,12 +30,12 @@ export const jwt = (req, res, next) => {
           success: false,
           message: 'JWT 錯誤'
         })
+      } else {
+        return res.status(StatusCodes.UNAUTHORIZED).json({
+          success: false,
+          message: info.message
+        })
       }
-    } else {
-      return res.status(StatusCodes.UNAUTHORIZED).json({
-        success: false,
-        message: info.message || '錯誤'
-      })
     }
     req.user = data.user
     req.token = data.token

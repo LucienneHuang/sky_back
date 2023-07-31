@@ -44,10 +44,12 @@ export const login = async (req, res) => {
       result: {
         token,
         email: req.user.email,
-        role: req.user.role,
+        nickname: req.user.nickname,
+        avatar: req.user.avatar,
         // total 目前加到多少
         // current 目前的東西
-        cart: req.user.cart.reduce((total, current) => total + current.quantity, 0)
+        cart: req.user.cart.reduce((total, current) => total + current.quantity, 0),
+        role: req.user.role
       }
     })
   } catch (error) {
@@ -100,18 +102,23 @@ export const extend = async (req, res) => {
 // 取得使用者資料
 // 會在有登入狀態 + 進網頁時會用到
 // 不需要 async，因為使用者資料已經在 req.user 裡面了
+// 在這裡取得 email、role、nickname、avatar、cart 資料
 export const getProfile = (req, res) => {
   try {
+    console.log(req.user)
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
       result: {
         email: req.user.email,
         role: req.user.role,
+        nickname: req.user.nickname,
+        avatar: req.user.avatar,
         cart: req.user.cart.reduce((total, current) => total + current.quantity, 0)
       }
     })
   } catch (error) {
+    console.log(error)
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: '發生錯誤'

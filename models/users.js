@@ -45,7 +45,7 @@ const schema = new Schema({
   avatar: {
     type: String,
     default () {
-      return `https://source.boringavatars.com/beam/250/${this.email.split('@')[0]}?colors=264653,2a9d8f,e9c46a,f4a261,e76f51`
+      return `https://source.boringavatars.com/beam/250/${this.email.split('@')[0]}?colors=F3E6BC,F1C972,F5886B,72AE95,D07459`
     }
   },
   tokens: {

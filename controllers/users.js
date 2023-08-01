@@ -105,7 +105,6 @@ export const extend = async (req, res) => {
 // 在這裡取得 email、role、nickname、avatar、cart 資料
 export const getProfile = (req, res) => {
   try {
-    console.log(req.user)
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',

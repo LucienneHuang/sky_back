@@ -31,6 +31,9 @@ export const jwt = (req, res, next) => {
           message: 'JWT 錯誤'
         })
       } else {
+        if (info.message === 'No auth token') {
+          info.message = '缺少 JWT'
+        }
         return res.status(StatusCodes.UNAUTHORIZED).json({
           success: false,
           message: info.message

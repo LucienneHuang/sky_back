@@ -21,5 +21,5 @@ const schema = new Schema({
     type: String,
     required: [true, '缺少內容']
   }
-})
+}, { versionKey: false })
 export default model('contactUs', schema)

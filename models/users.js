@@ -4,8 +4,10 @@ import bcrypt from 'bcrypt'
 import UserRole from '../enums/UserRole.js'
 
 const cartSchema = Schema({
-  prooduct: {
+  // 商品 id
+  p_id: {
     type: ObjectId,
+    // 來源是 products
     ref: 'products',
     required: [true, '缺少商品']
   },

@@ -3,7 +3,7 @@ import { Router } from 'express'
 import * as auth from '../middlewares/auth.js'
 import upload from '../middlewares/upload.js'
 import contentType from '../middlewares/contentType.js'
-import { create, getAll, getOwn, get, getId, edit } from '../controllers/products.js'
+import { create, getAll, getOwn, get, getId, editOwnProduct } from '../controllers/products.js'
 import admin from '../middlewares/admin.js'
 
 const router = Router()
@@ -20,6 +20,6 @@ router.get('/', get)
 router.get('/:id', getId)
 
 // 編輯/更新
-router.patch('/:id', auth.jwt, contentType('multipart/form-data'), upload, edit)
+router.patch('/:id', auth.jwt, contentType('multipart/form-data'), upload, editOwnProduct)
 
 export default router

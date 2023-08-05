@@ -49,7 +49,8 @@ export const login = async (req, res) => {
         // total 目前加到多少
         // current 目前的東西
         cart: req.user.cart.reduce((total, current) => total + current.quantity, 0),
-        role: req.user.role
+        role: req.user.role,
+        user: req.user._id
       }
     })
   } catch (error) {
@@ -109,6 +110,7 @@ export const getProfile = (req, res) => {
       success: true,
       message: '',
       result: {
+        _id: req.user._id,
         email: req.user.email,
         role: req.user.role,
         nickname: req.user.nickname,

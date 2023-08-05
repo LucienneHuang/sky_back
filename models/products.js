@@ -27,6 +27,11 @@ const schema = new Schema({
       message: '找不到 {VALUE} 單位'
     }
   },
+  MaxNumber: {
+    type: Number,
+    required: [true, '缺少商品數量'],
+    min: [0, '數量太少']
+  },
   // 商品圖片
   image: {
     type: String,

@@ -9,8 +9,9 @@ export const create = async (req, res) => {
       name: req.body.name,
       price: req.body.price,
       currency: req.body.currency,
-      image: req.file.path,
-      images: req.file.path,
+      MaxNumber: req.body.MaxNumber,
+      image: req.files.image[0].path,
+      images: req.files.path,
       description: req.body.description,
       category: req.body.category,
       sell: req.body.sell
@@ -21,6 +22,7 @@ export const create = async (req, res) => {
       result
     })
   } catch (error) {
+    console.log(error)
     if (error.name === 'ValidationError') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,

@@ -43,11 +43,13 @@ export default (req, res, next) => {
         message
       })
     } else if (error) {
+      console.log(error)
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         success: false,
         message: '發生錯誤'
       })
     } else {
+      console.log(req.files)
       next()
     }
   })

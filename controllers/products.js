@@ -3,6 +3,10 @@ import products from '../models/products.js'
 import { getMessageFromValidationError } from '../utils/error.js'
 
 export const create = async (req, res) => {
+  const newArray = []
+  req.files.images.forEach(element => {
+    newArray.push(element.path)
+  })
   try {
     const result = await products.create({
       user: req.body.user,
@@ -11,7 +15,7 @@ export const create = async (req, res) => {
       currency: req.body.currency,
       MaxNumber: req.body.MaxNumber,
       image: req.files.image[0].path,
-      images: req.files.path,
+      images: newArray,
       description: req.body.description,
       category: req.body.category,
       sell: req.body.sell
@@ -127,8 +131,7 @@ export const editOwnProduct = async (req, res) => {
       name: req.body.name,
       price: req.body.price,
       currency: req.body.currency,
-      image: req.file?.path,
-      images: req.file?.path,
+      MaxNumber: req.body.MaxNumber,
       description: req.body.description,
       category: req.body.category,
       sell: req.body.sell
@@ -136,6 +139,11 @@ export const editOwnProduct = async (req, res) => {
     if (!result) {
       throw new Error('NOT FOUND')
     }
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+      result
+    })
   } catch (error) {
     if (error.name === 'ValidationError') {
       res.status(StatusCodes.BAD_REQUEST).json({

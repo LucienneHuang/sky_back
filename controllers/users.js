@@ -126,3 +126,62 @@ export const getProfile = (req, res) => {
     })
   }
 }
+
+export const editProfile = async (req, res) => {
+  try {
+    const avatarImg = req.files.avatar ? req.files.avatar[0].path : req.body.avatar
+    const result = await users.findByIdAndUpdate(req.params.id, {
+      email: req.body.email,
+      nickname: req.body.nickname,
+      avatar: avatarImg
+    }, { new: true, runValidators: true })
+    if (!result) {
+      throw new Error('NOT FOUND')
+    }
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+      result
+    })
+  } catch (error) {
+    console.log(error)
+    if (error.name === 'ValidationError') {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: getMessageFromValidationError(error)
+      })
+    } else if (error.name === 'CastError') {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: '格式錯誤'
+      })
+    } else if (error.message === 'NOT FOUND') {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: '找不到'
+      })
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: '發生錯誤'
+      })
+    }
+  }
+}
+// 取得所有使用者
+export const getAll = async (req, res) => {
+  try {
+    const result = await users.find()
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+      result
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: '發生錯誤'
+    })
+  }
+}

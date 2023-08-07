@@ -49,7 +49,6 @@ export default (req, res, next) => {
         message: '發生錯誤'
       })
     } else {
-      console.log(req.files)
       next()
     }
   })

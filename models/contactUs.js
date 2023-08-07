@@ -20,6 +20,14 @@ const schema = new Schema({
   message: {
     type: String,
     required: [true, '缺少內容']
+  },
+  done: {
+    type: Boolean,
+    default: false
+  },
+  date: {
+    type: String,
+    default: Date.now
   }
 }, { versionKey: false })
 export default model('contactUs', schema)

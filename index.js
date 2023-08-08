@@ -7,6 +7,7 @@ import cors from 'cors'
 import usersRoute from './routes/users.js'
 import productsRoute from './routes/products.js'
 import contactUsRoute from './routes/contactUs.js'
+import articlesRoute from './routes/articles.js'
 import './passport/passport.js'
 // passport 還沒寫、狀態碼還沒裝、路由這些還沒寫
 
@@ -47,6 +48,7 @@ app.use(mongoSanitize())
 app.use('/users', usersRoute)
 app.use('/products', productsRoute)
 app.use('/contactUs', contactUsRoute)
+app.use('/articles', articlesRoute)
 
 // all 代表 get, post, patch ...
 // * 所有路徑的所有請求

@@ -4,9 +4,11 @@ import { getMessageFromValidationError } from '../utils/error.js'
 
 export const create = async (req, res) => {
   const newArray = []
-  req.files.images.forEach(element => {
-    newArray.push(element.path)
-  })
+  if (typeof req.files.images !== 'undefined') {
+    req.files.images.forEach(element => {
+      newArray.push(element.path)
+    })
+  }
   try {
     const result = await products.create({
       user: req.body.user,
@@ -26,7 +28,6 @@ export const create = async (req, res) => {
       result
     })
   } catch (error) {
-    console.log(error)
     if (error.name === 'ValidationError') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,

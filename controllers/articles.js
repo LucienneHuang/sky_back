@@ -72,7 +72,7 @@ export const getRealms = async (req, res) => {
 // 還沒寫完
 export const getNews = async (req, res) => {
   try {
-    const result = await articles.find({ category: '區域介紹', display: true }).sort({ date: 1 })
+    const result = await articles.find({ category: '最新消息', display: true }).sort({ date: -1 })
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',

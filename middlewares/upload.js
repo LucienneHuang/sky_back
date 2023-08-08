@@ -13,7 +13,21 @@ cloudinary.config({
 // 設定 upload
 const upload = multer({
   // 設定儲存位置
-  storage: new CloudinaryStorage({ cloudinary }),
+  // storage: new CloudinaryStorage({ cloudinary }),
+  storage: new CloudinaryStorage({
+    cloudinary,
+    params: {
+      folder: (req, file) => {
+        if (file.fieldname === 'avatar') {
+          return 'sky/avatar'
+        } else if (file.fieldname === 'image') {
+          return 'sky/image'
+        } else {
+          return 'sky/images'
+        }
+      }
+    }
+  }),
   // 設定只接收哪種檔案
   fileFilter (req, file, callback) {
     if (['image/jpg', 'image/jpeg', 'image/png'].includes(file.mimetype)) {
@@ -25,13 +39,14 @@ const upload = multer({
   // 設定檔案大小
   // 只允許 1 MB
   limits: {
-    fieldSize: 1024 * 1024
+    fieldSize: 4 * 1024 * 1024
   }
 })
 
 export default (req, res, next) => {
   upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'image', maxCount: 1 }, { name: 'images', maxCount: 6 }])(req, res, error => {
     if (error instanceof multer.MulterError) {
+      console.log(error)
       let message = '上傳錯誤'
       if (error.code === 'LIMIT_FILE_SIZE') {
         message = '檔案太大'

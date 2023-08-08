@@ -9,8 +9,8 @@ const router = Router()
 
 router.post('/', auth.jwt, admin, contentType('multipart/form-data'), upload, create)
 router.get('/all', auth.jwt, admin, getAll)
-router.get('/realms', auth.jwt, admin, getRealms)
-router.get('/getNews', auth.jwt, admin, getNews)
+router.get('/getRealms', getRealms)
+router.get('/getNews', getNews)
 router.patch('/:id', auth.jwt, admin, upload, contentType('multipart/form-data'), editArticle)
 router.delete('/:id', auth.jwt, admin, deleteArticle)
 

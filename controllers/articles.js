@@ -72,19 +72,30 @@ export const getRealms = async (req, res) => {
 // 還沒寫完
 export const getNews = async (req, res) => {
   try {
-    const result = await articles.find({ category: '最新消息', display: true }).sort({ date: -1 })
+    const result = await articles.find({ category: '最新消息', display: true }).sort({ date: req.query.sortOrder === 'asc' ? 1 : -1 }).skip((req.query.currentPage - 1) * req.query.articlesPerPage).limit(req.query.articlesPerPage)
+    let count = await articles.find({ category: '最新消息', display: true }).count()
+    if (count % 5 === 0) {
+      count = Math.floor(count / req.query.articlesPerPage)
+    } else {
+      count = Math.ceil(count / req.query.articlesPerPage)
+    }
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
-      result
+      result: {
+        data: result,
+        count
+      }
     })
   } catch (error) {
+    console.log(error)
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: '發生錯誤'
     })
   }
 }
+//
 // 更新文章
 export const editArticle = async (req, res) => {
   try {

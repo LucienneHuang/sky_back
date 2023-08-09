@@ -171,7 +171,7 @@ export const editProfile = async (req, res) => {
 // 取得所有使用者
 export const getAll = async (req, res) => {
   try {
-    const result = await users.find()
+    const result = await users.find().sort({ role: -1 })
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',

@@ -26,11 +26,6 @@ const schema = new Schema({
     type: String,
     required: [true, '缺少圖片']
   },
-  // 圖片(選填)
-  images: {
-    type: [String],
-    default: []
-  },
   // 完整文章
   description: {
     type: String,

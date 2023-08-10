@@ -13,6 +13,7 @@ export const create = async (req, res) => {
       description: req.body.description,
       category: req.body.category,
       realms: req.body.realms,
+      quote: req.body.quote,
       display: req.body.display
     })
     res.status(StatusCodes.OK).json({
@@ -109,6 +110,7 @@ export const editArticle = async (req, res) => {
       description: req.body.description,
       category: req.body.category,
       realms: req.body.realms,
+      quote: req.body.quote,
       display: req.body.display
     }, { new: true, runValidators: true })
     if (!result) {
@@ -153,6 +155,22 @@ export const deleteArticle = async (req, res) => {
     })
   } catch (error) {
     console.log(error)
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: '錯誤'
+    })
+  }
+}
+
+export const getIndividual = async (req, res) => {
+  try {
+    const result = await articles.findById(req.params.id)
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+      result
+    })
+  } catch (error) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: '錯誤'

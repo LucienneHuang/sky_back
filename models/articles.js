@@ -47,6 +47,10 @@ const schema = new Schema({
       message: '找不到 {VALUE} 分類'
     }
   },
+  quote: {
+    type: String,
+    default: ''
+  },
   display: {
     type: Boolean,
     required: [true, '缺少是否顯示']

@@ -3,7 +3,7 @@ import { Router } from 'express'
 import * as auth from '../middlewares/auth.js'
 import upload from '../middlewares/upload.js'
 import contentType from '../middlewares/contentType.js'
-import { create, getAll, getOwn, get, getId, editOwnProduct } from '../controllers/products.js'
+import { create, getAll, getOwn, get, getId, editOwnProduct, getUserProducts } from '../controllers/products.js'
 import admin from '../middlewares/admin.js'
 
 const router = Router()
@@ -18,6 +18,9 @@ router.get('/own', auth.jwt, getOwn)
 router.get('/', get)
 // 取 id
 router.get('/:id', getId)
+
+// 取 user
+router.get('/user/:id', getUserProducts)
 
 // 編輯/更新
 router.patch('/:id', auth.jwt, contentType('multipart/form-data'), upload, editOwnProduct)

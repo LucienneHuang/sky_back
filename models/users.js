@@ -2,7 +2,7 @@ import { Schema, ObjectId, Error, model } from 'mongoose'
 import validator from 'validator'
 import bcrypt from 'bcrypt'
 import UserRole from '../enums/UserRole.js'
-import AccountSuspended from '../enums/AccountSuspended.js'
+import BlockUser from '../enums/BlockUser.js'
 
 const cartSchema = Schema({
   // 商品 id
@@ -66,9 +66,9 @@ const schema = new Schema({
     default: UserRole.USER
   },
   // 是否停權
-  AccountSuspended: {
+  block: {
     type: Number,
-    default: AccountSuspended.NO
+    default: BlockUser.NO
   }
 }, { versionKey: false })
 

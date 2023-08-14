@@ -127,12 +127,14 @@ export const getId = async (req, res) => {
 
 export const editOwnProduct = async (req, res) => {
   try {
+    const mainImg = req.files.image ? req.files.image[0].path : req.body.image
     const result = await products.findByIdAndUpdate(req.params.id, {
       user: req.body.user,
       name: req.body.name,
       price: req.body.price,
       currency: req.body.currency,
       MaxNumber: req.body.MaxNumber,
+      image: mainImg,
       description: req.body.description,
       category: req.body.category,
       sell: req.body.sell
@@ -152,6 +154,38 @@ export const editOwnProduct = async (req, res) => {
         message: getMessageFromValidationError(error)
       })
     } else if (error.name === 'CastError') {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: '格式錯誤'
+      })
+    } else if (error.message === 'NOT FOUND') {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: '找不到'
+      })
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: '發生錯誤'
+      })
+    }
+  }
+}
+
+export const getUserProducts = async (req, res) => {
+  try {
+    const result = await products.find({ user: req.params.id }, { _id: 1 })
+    if (!result) {
+      throw new Error('NOT FOUND')
+    }
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+      result
+    })
+  } catch (error) {
+    console.log(error)
+    if (error.name === 'CastError') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message: '格式錯誤'

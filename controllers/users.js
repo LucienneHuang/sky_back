@@ -50,7 +50,8 @@ export const login = async (req, res) => {
         // current 目前的東西
         cart: req.user.cart.reduce((total, current) => total + current.quantity, 0),
         role: req.user.role,
-        user: req.user._id
+        user: req.user._id,
+        block: req.user.block
       }
     })
   } catch (error) {
@@ -113,6 +114,7 @@ export const getProfile = (req, res) => {
         _id: req.user._id,
         email: req.user.email,
         role: req.user.role,
+        block: req.user.block,
         nickname: req.user.nickname,
         avatar: req.user.avatar,
         cart: req.user.cart.reduce((total, current) => total + current.quantity, 0)
@@ -126,7 +128,7 @@ export const getProfile = (req, res) => {
     })
   }
 }
-
+// 編輯個人檔案
 export const editProfile = async (req, res) => {
   try {
     const avatarImg = req.files.avatar ? req.files.avatar[0].path : req.body.avatar
@@ -178,10 +180,68 @@ export const getAll = async (req, res) => {
       result
     })
   } catch (error) {
-    console.log(error)
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: '發生錯誤'
     })
+  }
+}
+// 取得所有被 block 的使用者
+export const getBlock = async (req, res) => {
+  try {
+    const result = await users.find({ block: 1 }, { _id: 1 })
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+      result
+    })
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: '發生錯誤'
+    })
+  }
+}
+
+export const userManage = async (req, res) => {
+  try {
+    const avatarImg = req.files.avatar ? req.files.avatar[0].path : req.body.avatar
+    const result = await users.findByIdAndUpdate(req.params.id, {
+      email: req.body.email,
+      nickname: req.body.nickname,
+      avatar: avatarImg,
+      block: req.body.block
+    }, { new: true, runValidators: true })
+    if (!result) {
+      throw new Error('NOT FOUND')
+    }
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+      result
+    })
+  } catch (error) {
+    console.log(error)
+    if (error.name === 'ValidationError') {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: getMessageFromValidationError(error)
+      })
+    } else if (error.name === 'CastError') {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: '格式錯誤'
+      })
+    } else if (error.message === 'NOT FOUND') {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: '找不到'
+      })
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: '發生錯誤'
+      })
+    }
   }
 }

@@ -19,6 +19,12 @@ const schema = new Schema({
     ref: 'users',
     required: [true, '缺少使用者']
   },
+  // 賣家
+  seller: {
+    type: ObjectId,
+    ref: 'users',
+    required: [true, '缺少賣家']
+  },
   // 訂單日期
   date: {
     type: Date,

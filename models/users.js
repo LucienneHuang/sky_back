@@ -4,17 +4,28 @@ import bcrypt from 'bcrypt'
 import UserRole from '../enums/UserRole.js'
 import BlockUser from '../enums/BlockUser.js'
 
-const cartSchema = Schema({
-  // 商品 id
-  p_id: {
+const detailSchema = Schema({
+  quantity: {
+    type: Number,
+    required: [true, '缺少數量']
+  },
+  product: {
     type: ObjectId,
     // 來源是 products
     ref: 'products',
     required: [true, '缺少商品']
+  }
+}, { versionKey: false })
+
+const sellerSchema = Schema({
+  seller: {
+    type: ObjectId,
+    ref: 'users',
+    required: [true, '缺少賣家']
   },
-  quantity: {
-    type: Number,
-    required: [true, '缺少數量']
+  productCart: {
+    type: [detailSchema],
+    default: []
   }
 }, { versionKey: false })
 
@@ -57,7 +68,7 @@ const schema = new Schema({
   },
   // 購物車
   cart: {
-    type: [cartSchema],
+    type: [sellerSchema],
     default: []
   },
   // 權限

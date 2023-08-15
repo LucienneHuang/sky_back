@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import contentType from '../middlewares/contentType.js'
-import { register, login, logout, extend, getProfile, editProfile, getAll, getBlock, userManage } from '../controllers/users.js'
+import { register, login, logout, extend, getProfile, editProfile, getAll, getBlock, userManage, getCart, editCart } from '../controllers/users.js'
 import * as auth from '../middlewares/auth.js'
 import upload from '../middlewares/upload.js'
 import admin from '../middlewares/admin.js'
@@ -18,5 +18,9 @@ router.get('/all', auth.jwt, admin, getAll)
 // 只有管理員才能 block 使用者
 router.patch('/all/:id', auth.jwt, admin, upload, contentType('multipart/form-data'), userManage)
 router.patch('/:id', auth.jwt, upload, editProfile)
+
+// 購物車
+router.get('/cart', auth.jwt, getCart)
+router.post('/cart', contentType('application/json'), auth.jwt, editCart)
 
 export default router

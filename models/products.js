@@ -23,7 +23,7 @@ const schema = new Schema({
     type: String,
     required: [true, '缺少商品幣值單位'],
     enum: {
-      values: ['季票', '愛心', '現金', '噗幣', '其他'],
+      values: ['台幣'],
       message: '找不到 {VALUE} 單位'
     }
   },

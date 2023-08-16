@@ -249,13 +249,14 @@ export const userManage = async (req, res) => {
 
 export const getCart = async (req, res) => {
   try {
-    const result = await users.findById(req.user._id, 'cart').populate('cart.product')
+    const result = await users.findById(req.user._id, 'cart').populate('cart.productCart.product').populate('cart.seller', 'nickname')
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
       result: result.cart
     })
   } catch (error) {
+    console.log(error)
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: '發生錯誤'
@@ -323,11 +324,11 @@ export const getCart = async (req, res) => {
 
 export const editCart = async (req, res) => {
   try {
-    // 尋找購物車有沒有我們賣家
+    // 尋找購物車有沒有存在該新增商品的賣家
     const idxSeller = req.user.cart.findIndex(cart => cart.seller.toString() === req.body.seller)
     // 如果有賣家
     if (idxSeller > -1) {
-      // 檢查是否有該商品
+      // 檢查是否購物車已經有該商品
       const idx = req.user.cart[idxSeller].productCart.findIndex(productCart => productCart.product.toString() === req.body.product)
       // 如果有該商品
       if (idx > -1) {
@@ -379,7 +380,7 @@ export const editCart = async (req, res) => {
           await req.user.cart.push({
             seller: seller._id
           })
-          await req.user.cart[0].productCart.push({
+          await req.user.cart[req.user.cart.length - 1].productCart.push({
             product: product._id,
             quantity: req.body.quantity
           })

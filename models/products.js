@@ -60,6 +60,10 @@ const schema = new Schema({
   sell: {
     type: Boolean,
     required: [true, '缺少商品上架狀態']
+  },
+  date: {
+    type: String,
+    default: Date.now
   }
 }, { versionKey: false })
 

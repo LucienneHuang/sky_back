@@ -20,7 +20,8 @@ export const create = async (req, res) => {
       images: newArray,
       description: req.body.description,
       category: req.body.category,
-      sell: req.body.sell
+      sell: req.body.sell,
+      date: req.body.date
     })
     res.status(StatusCodes.OK).json({
       success: true,
@@ -79,7 +80,7 @@ export const getOwn = async (req, res) => {
 export const get = async (req, res) => {
   try {
     // sell: true 設定只有在架上的東西
-    const result = await products.find({ sell: true })
+    const result = await products.find({ sell: true }).populate('user', 'nickname')
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
@@ -96,7 +97,7 @@ export const get = async (req, res) => {
 export const getId = async (req, res) => {
   try {
     // req.params.id => 為路由的參數的 id
-    const result = await products.findById(req.params.id)
+    const result = await products.findById(req.params.id).populate('user', 'nickname')
     if (!result) {
       throw new Error('NOT FOUND')
     }

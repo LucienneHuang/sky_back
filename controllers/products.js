@@ -46,7 +46,7 @@ export const create = async (req, res) => {
 // 取所有商品，給管理員看的
 export const getAll = async (req, res) => {
   try {
-    const result = await products.find()
+    const result = await products.find().populate('user', 'nickname')
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
@@ -80,13 +80,23 @@ export const getOwn = async (req, res) => {
 export const get = async (req, res) => {
   try {
     // sell: true 設定只有在架上的東西
-    const result = await products.find({ sell: true }).populate('user', 'nickname')
+    const result = await products.find({ sell: true }).populate('user', 'nickname').sort({ date: req.query.sortOrder === 'asc' ? 1 : -1 }).skip((req.query.currentPage - 1) * req.query.productsPerPage).limit(req.query.productsPerPage)
+    let count = await products.find({ sell: true }).count()
+    if (count % req.query.productsPerPage === 0) {
+      count = Math.floor(count / req.query.productsPerPage)
+    } else {
+      count = Math.ceil(count / req.query.productsPerPage)
+    }
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
-      result
+      result: {
+        data: result,
+        count
+      }
     })
   } catch (error) {
+    console.log(error)
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: '發生錯誤'

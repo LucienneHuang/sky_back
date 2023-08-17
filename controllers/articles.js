@@ -52,8 +52,7 @@ export const getAll = async (req, res) => {
     })
   }
 }
-// 取得區域文章
-// 還沒寫完
+// 取得區域文章，前端看的
 export const getRealms = async (req, res) => {
   try {
     const result = await articles.find({ category: '區域介紹', display: true }).sort({ date: 1 })
@@ -69,8 +68,7 @@ export const getRealms = async (req, res) => {
     })
   }
 }
-// 取得最新消息文章
-// 還沒寫完
+// 取得最新消息文章，前端看的
 export const getNews = async (req, res) => {
   try {
     const result = await articles.find({ category: '最新消息', display: true }).sort({ date: req.query.sortOrder === 'asc' ? 1 : -1 }).skip((req.query.currentPage - 1) * req.query.articlesPerPage).limit(req.query.articlesPerPage)
@@ -89,14 +87,12 @@ export const getNews = async (req, res) => {
       }
     })
   } catch (error) {
-    console.log(error)
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: '發生錯誤'
     })
   }
 }
-//
 // 更新文章
 export const editArticle = async (req, res) => {
   try {
@@ -145,7 +141,7 @@ export const editArticle = async (req, res) => {
     }
   }
 }
-
+// 刪除文章
 export const deleteArticle = async (req, res) => {
   try {
     await articles.deleteOne({ _id: req.params.id })
@@ -161,7 +157,7 @@ export const deleteArticle = async (req, res) => {
     })
   }
 }
-
+// 取得特定文章
 export const getIndividual = async (req, res) => {
   try {
     const result = await articles.findById(req.params.id)

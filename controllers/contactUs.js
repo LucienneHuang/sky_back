@@ -25,6 +25,7 @@ export const getMessage = async (req, res) => {
       message: '',
       result
     })
+    console.log(result)
   } catch (error) {
     console.log(error)
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

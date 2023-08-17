@@ -83,6 +83,23 @@ export const get = async (req, res) => {
     })
   }
 }
+export const getSell = async (req, res) => {
+  try {
+    const result = await orders.find({ seller: req.user._id }).populate('cart.product').populate('user', 'nickname')
+    console.log(result)
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+      result
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: '發生錯誤'
+    })
+  }
+}
 export const getAll = async (req, res) => {
   try {
     // 後面那個是代入 user 的資料 但是只取 email 欄位
@@ -97,5 +114,44 @@ export const getAll = async (req, res) => {
       success: false,
       message: '發生錯誤'
     })
+  }
+}
+export const updateOrder = async (req, res) => {
+  try {
+    console.log(req.body)
+    const result = await orders.findByIdAndUpdate(req.params.id, {
+      check: req.body.check
+    }, { new: true, runValidators: true })
+    if (!result) {
+      throw new Error('NOT FOUND')
+    }
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+      result
+    })
+  } catch (error) {
+    console.log(error)
+    if (error.name === 'ValidationError') {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: getMessageFromValidationError(error)
+      })
+    } else if (error.name === 'CastError') {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: '格式錯誤'
+      })
+    } else if (error.message === 'NOT FOUND') {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: '找不到'
+      })
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: '發生錯誤'
+      })
+    }
   }
 }

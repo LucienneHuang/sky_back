@@ -122,7 +122,6 @@ export const getProfile = (req, res) => {
       }
     })
   } catch (error) {
-    console.log(error)
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: '發生錯誤'
@@ -147,7 +146,6 @@ export const editProfile = async (req, res) => {
       result
     })
   } catch (error) {
-    console.log(error)
     if (error.name === 'ValidationError') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
@@ -222,7 +220,6 @@ export const userManage = async (req, res) => {
       result
     })
   } catch (error) {
-    console.log(error)
     if (error.name === 'ValidationError') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
@@ -256,7 +253,6 @@ export const getCart = async (req, res) => {
       result: result.cart
     })
   } catch (error) {
-    console.log(error)
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: '發生錯誤'
@@ -396,7 +392,6 @@ export const editCart = async (req, res) => {
 
     })
   } catch (error) {
-    console.log(error)
     if (error.name === 'NOT FOUND') {
       res.status(StatusCodes.NOT_FOUND).json({
         success: false,

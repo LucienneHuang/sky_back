@@ -1,14 +1,15 @@
 import { Schema, ObjectId, model } from 'mongoose'
+import validator from 'validator'
 // 結帳的時候把使用者的購物車資料直接貼過來
 const orderSchema = Schema({
-  prooduct: {
-    type: ObjectId,
-    ref: 'products',
-    required: [true, '缺少商品']
-  },
   quantity: {
     type: Number,
     required: [true, '缺少數量']
+  },
+  product: {
+    type: ObjectId,
+    ref: 'products',
+    required: [true, '缺少商品']
   }
 }, { versionKey: false })
 
@@ -24,6 +25,36 @@ const schema = new Schema({
     type: ObjectId,
     ref: 'users',
     required: [true, '缺少賣家']
+  },
+  realName: {
+    type: String,
+    required: [true, '缺少姓名']
+  },
+  phoneNumber: {
+    type: String,
+    required: [true, '缺少電話'],
+    validate: {
+      validator (value) {
+        return validator.isMobilePhone(value, 'zh-TW')
+      },
+      message: '電話格式錯誤'
+    }
+  },
+  address: {
+    type: String,
+    required: [true, '缺少送貨地址/網址']
+  },
+  payment: {
+    type: String,
+    required: [true, '缺少付款方式'],
+    enum: {
+      values: ['轉帳', 'linepay', '貨到付款'],
+      message: '找不到 {VALUE} 分類'
+    }
+  },
+  total: {
+    type: Number,
+    required: [true, '缺少總金額']
   },
   // 訂單日期
   date: {
@@ -42,6 +73,10 @@ const schema = new Schema({
       },
       message: '購物車不能為空'
     }
+  },
+  check: {
+    type: Boolean,
+    default: false
   }
 }, { versionKey: false })
 

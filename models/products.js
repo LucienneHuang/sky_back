@@ -62,7 +62,7 @@ const schema = new Schema({
     required: [true, '缺少商品上架狀態']
   },
   date: {
-    type: String,
+    type: Date,
     default: Date.now
   }
 }, { versionKey: false })

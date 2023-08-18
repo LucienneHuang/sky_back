@@ -9,39 +9,44 @@ export const create = async (req, res) => {
     if (req.user.cart.length === 0) {
       throw new Error('EMPTY')
     }
-    const user = await users.findById(req.user._id, 'cart').populate('cart.productCart.product')
-    // every 是不是每個都 return true
-    // some 是有沒有任何一個東西 return true
-    // filter 是 true 的留著，false 踢掉
-    // 每一個 cart.product.sell 都是 true，canCheckOut才會是 true
-    const canCheckOut = user.cart.every(cart => {
-      return cart.productCart.every(item => item.product.sell)
-    })
-    if (!canCheckOut) {
-      throw new Error('SELL')
-    }
-    // 建立訂單
-    for (const miniCart in user.cart) {
-      const sum = user.cart[miniCart].productCart.reduce((total, current) => total + (current.quantity * current.product.price), 0)
-      await orders.create({
-        user: user._id,
-        seller: user.cart[miniCart].seller,
-        realName: req.body.realName,
-        phoneNumber: req.body.phoneNumber,
-        address: req.body.address,
-        payment: req.body.payment,
-        date: req.body.date,
-        total: sum,
-        cart: user.cart[miniCart].productCart
+    const user = await users.findById(req.user._id, 'cart block').populate('cart.productCart.product')
+
+    if (user.block === 1) {
+      throw new Error('BLOCKED')
+    } else {
+      // every 是不是每個都 return true
+      // some 是有沒有任何一個東西 return true
+      // filter 是 true 的留著，false 踢掉
+      // 每一個 cart.product.sell 都是 true，canCheckOut才會是 true
+      const canCheckOut = user.cart.every(cart => {
+        return cart.productCart.every(item => item.product.sell)
+      })
+      if (!canCheckOut) {
+        throw new Error('SELL')
+      }
+      // 建立訂單
+      for (const miniCart in user.cart) {
+        const sum = user.cart[miniCart].productCart.reduce((total, current) => total + (current.quantity * current.product.price), 0)
+        await orders.create({
+          user: user._id,
+          seller: user.cart[miniCart].seller,
+          realName: req.body.realName,
+          phoneNumber: req.body.phoneNumber,
+          address: req.body.address,
+          payment: req.body.payment,
+          date: req.body.date,
+          total: sum,
+          cart: user.cart[miniCart].productCart
+        })
+      }
+      // 清空購物車
+      req.user.cart = []
+      await req.user.save()
+      res.status(StatusCodes.OK).json({
+        success: true,
+        message: ''
       })
     }
-    // 清空購物車
-    req.user.cart = []
-    await req.user.save()
-    res.status(StatusCodes.OK).json({
-      success: true,
-      message: ''
-    })
   } catch (error) {
     if (error.message === 'EMPTY') {
       res.status(StatusCodes.BAD_REQUEST).json({
@@ -58,7 +63,13 @@ export const create = async (req, res) => {
         success: false,
         message: getMessageFromValidationError(error)
       })
+    } else if (error.message === 'BLOCKED') {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: '帳號停權中'
+      })
     } else {
+      console.log(error)
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         success: false,
         message: '發生錯誤'

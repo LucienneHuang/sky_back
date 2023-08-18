@@ -46,7 +46,13 @@ export const create = async (req, res) => {
 // 取所有商品，給管理員看的
 export const getAll = async (req, res) => {
   try {
-    const result = await products.find().populate('user', 'nickname')
+    const result = await products.find({
+      $or: [
+        { name: new RegExp(req.query.search, 'i') },
+        { description: new RegExp(req.query.search, 'i') },
+        { category: new RegExp(req.query.search, 'i') }
+      ]
+    }).populate('user', 'nickname')
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
@@ -62,7 +68,14 @@ export const getAll = async (req, res) => {
 // 取所有自己的商品
 export const getOwn = async (req, res) => {
   try {
-    const result = await products.find({ user: req.user._id })
+    const result = await products.find({
+      user: req.user._id,
+      $or: [
+        { name: new RegExp(req.query.search, 'i') },
+        { description: new RegExp(req.query.search, 'i') },
+        { category: new RegExp(req.query.search, 'i') }
+      ]
+    })
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
@@ -80,8 +93,22 @@ export const getOwn = async (req, res) => {
 export const get = async (req, res) => {
   try {
     // sell: true 設定只有在架上的東西
-    const result = await products.find({ sell: true }).populate('user', 'nickname').sort({ date: req.query.sortOrder === 'asc' ? 1 : -1 }).skip((req.query.currentPage - 1) * req.query.productsPerPage).limit(req.query.productsPerPage)
-    let count = await products.find({ sell: true }).count()
+    const result = await products.find({
+      sell: true,
+      $or: [
+        { name: new RegExp(req.query.search, 'i') },
+        { description: new RegExp(req.query.search, 'i') },
+        { category: new RegExp(req.query.search, 'i') }
+      ]
+    }).populate('user', 'nickname').sort({ date: req.query.sortOrder === 'asc' ? 1 : -1 }).skip((req.query.currentPage - 1) * req.query.productsPerPage).limit(req.query.productsPerPage)
+    let count = await products.find({
+      sell: true,
+      $or: [
+        { name: new RegExp(req.query.search, 'i') },
+        { description: new RegExp(req.query.search, 'i') },
+        { category: new RegExp(req.query.search, 'i') }
+      ]
+    }).count()
     if (count % req.query.productsPerPage === 0) {
       count = Math.floor(count / req.query.productsPerPage)
     } else {

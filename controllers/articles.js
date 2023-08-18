@@ -39,7 +39,14 @@ export const create = async (req, res) => {
 // 取得所有文章
 export const getAll = async (req, res) => {
   try {
-    const result = await articles.find().sort({ date: -1 })
+    const result = await articles.find({
+      $or: [
+        { title: new RegExp(req.query.search, 'i') },
+        { description: new RegExp(req.query.search, 'i') },
+        { category: new RegExp(req.query.search, 'i') },
+        { realms: new RegExp(req.query.search, 'i') }
+      ]
+    }).sort({ date: -1 })
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
@@ -71,8 +78,22 @@ export const getRealms = async (req, res) => {
 // 取得最新消息文章，前端看的
 export const getNews = async (req, res) => {
   try {
-    const result = await articles.find({ category: '最新消息', display: true }).sort({ date: req.query.sortOrder === 'asc' ? 1 : -1 }).skip((req.query.currentPage - 1) * req.query.articlesPerPage).limit(req.query.articlesPerPage)
-    let count = await articles.find({ category: '最新消息', display: true }).count()
+    const result = await articles.find({
+      category: '最新消息',
+      display: true,
+      $or: [
+        { title: new RegExp(req.query.search, 'i') },
+        { description: new RegExp(req.query.search, 'i') }
+      ]
+    }).sort({ date: req.query.sortOrder === 'asc' ? 1 : -1 }).skip((req.query.currentPage - 1) * req.query.articlesPerPage).limit(req.query.articlesPerPage)
+    let count = await articles.find({
+      category: '最新消息',
+      display: true,
+      $or: [
+        { title: new RegExp(req.query.search, 'i') },
+        { description: new RegExp(req.query.search, 'i') }
+      ]
+    }).count()
     if (count % 5 === 0) {
       count = Math.floor(count / req.query.articlesPerPage)
     } else {

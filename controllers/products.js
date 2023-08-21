@@ -93,14 +93,19 @@ export const getOwn = async (req, res) => {
 export const get = async (req, res) => {
   try {
     // sell: true 設定只有在架上的東西
-    const result = await products.find({
-      sell: true,
-      $or: [
-        { name: new RegExp(req.query.search, 'i') },
-        { description: new RegExp(req.query.search, 'i') },
-        { category: new RegExp(req.query.search, 'i') }
-      ]
-    }).populate('user', 'nickname').sort({ date: req.query.sortOrder === 'asc' ? 1 : -1 }).skip((req.query.currentPage - 1) * req.query.productsPerPage).limit(req.query.productsPerPage)
+    const result = await products
+      .find({
+        sell: true,
+        $or: [
+          { name: new RegExp(req.query.search, 'i') },
+          { description: new RegExp(req.query.search, 'i') },
+          { category: new RegExp(req.query.search, 'i') }
+        ]
+      })
+      .populate('user', 'nickname')
+      .sort({ date: req.query.sortOrder === 'asc' ? 1 : -1 })
+      .skip((req.query.currentPage - 1) * req.query.productsPerPage)
+      .limit(req.query.productsPerPage)
     let count = await products.find({
       sell: true,
       $or: [
@@ -109,6 +114,7 @@ export const get = async (req, res) => {
         { category: new RegExp(req.query.search, 'i') }
       ]
     }).count()
+    // 檢查 nickname，待改
     if (count % req.query.productsPerPage === 0) {
       count = Math.floor(count / req.query.productsPerPage)
     } else {
@@ -166,6 +172,22 @@ export const getId = async (req, res) => {
 export const editOwnProduct = async (req, res) => {
   try {
     const mainImg = req.files.image ? req.files.image[0].path : req.body.image
+    const newArray = []
+    if (typeof req.body.oldImgs !== 'undefined') {
+      if (typeof req.body.oldImgs === 'string') {
+        newArray.push(req.body.oldImgs)
+      } else {
+        req.body.oldImgs.forEach(element => {
+          newArray.push(element)
+        })
+      }
+    }
+    if (typeof req.files.images !== 'undefined') {
+      req.files.images.forEach(element => {
+        newArray.push(element.path)
+      })
+    }
+    console.log(newArray)
     const result = await products.findByIdAndUpdate(req.params.id, {
       user: req.body.user,
       name: req.body.name,
@@ -173,6 +195,7 @@ export const editOwnProduct = async (req, res) => {
       currency: req.body.currency,
       MaxNumber: req.body.MaxNumber,
       image: mainImg,
+      images: newArray,
       description: req.body.description,
       category: req.body.category,
       sell: req.body.sell
@@ -186,6 +209,7 @@ export const editOwnProduct = async (req, res) => {
       result
     })
   } catch (error) {
+    console.log(error)
     if (error.name === 'ValidationError') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,

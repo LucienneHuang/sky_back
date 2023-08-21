@@ -3,11 +3,29 @@ import products from '../models/products.js'
 import { StatusCodes } from 'http-status-codes'
 import { getMessageFromValidationError } from '../utils/error.js'
 import jwt from 'jsonwebtoken'
+import nodemailer from 'nodemailer'
 
 // 註冊
 export const register = async (req, res) => {
   try {
     const result = await users.create(req.body)
+    console.log(req.body.email)
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 465,
+      auth: {
+        user: 'skyclub.202308@gmail.com',
+        pass: 'rbcelquzumfcceqg'
+      }
+    })
+    transporter.sendMail({
+      from: 'skyclub.202308@gmail.com',
+      to: `${req.body.email}`,
+      subject: 'Sky Club | 註冊 Email 確認信',
+      html: '輸入信件內容'
+    }).then(info => {
+      console.log({ info })
+    }).catch(console.error)
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',

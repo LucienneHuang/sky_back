@@ -17,7 +17,7 @@ export const register = async (req, res) => {
         pass: `${process.env.EMAIL_PASSWORD}`
       }
     })
-    transporter.sendMail({
+    await transporter.sendMail({
       from: `${process.env.EMAIL_ACCOUNT}`,
       to: `${req.body.email}`,
       subject: 'Sky Club | 註冊確認信',
@@ -29,9 +29,7 @@ export const register = async (req, res) => {
       <div style="font-size: 1rem;font-weight: 600;">您的會員帳戶已建立，即日起您可以透過 Email 登入，並且能使用交易功能。<br>如果有任何疑問，歡迎<a
           href="https://luciennehuang.github.io/SkyClub/#/contact">聯絡我們</a>。<br>Sky Club 祝您有美好的一天。</div>
     </div>`
-    }).then(info => {
-      console.log({ info })
-    }).catch(console.error)
+    })
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',

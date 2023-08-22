@@ -55,7 +55,7 @@ export const create = async (req, res) => {
           <td>${item.product.price}</td>
         </tr>`
         }
-        transporter.sendMail({
+        await transporter.sendMail({
           from: `${process.env.EMAIL_ACCOUNT}`,
           to: `${user.cart[miniCart].seller.email}`,
           subject: 'Sky Club | 售出通知',
@@ -84,9 +84,7 @@ export const create = async (req, res) => {
             href="https://luciennehuang.github.io/SkyClub/#/contact">聯絡我們</a>。<br>Sky Club 祝您有美好的一天。</div>
           </div>
           `
-        }).then(info => {
-          console.log({ info })
-        }).catch(console.error)
+        })
       }
       // 清空購物車
       req.user.cart = []
@@ -201,7 +199,7 @@ export const updateOrder = async (req, res) => {
         <td>${item.product.price}</td>
       </tr>`
       }
-      transporter.sendMail({
+      await transporter.sendMail({
         from: `${process.env.EMAIL_ACCOUNT}`,
         to: `${order.user.email}`,
         subject: 'Sky Club | 出貨通知',
@@ -230,9 +228,7 @@ export const updateOrder = async (req, res) => {
           href="https://luciennehuang.github.io/SkyClub/#/contact">聯絡我們</a>。<br>Sky Club 祝您有美好的一天。</div>
         </div>
         `
-      }).then(info => {
-        console.log({ info })
-      }).catch(console.error)
+      })
     }
     res.status(StatusCodes.OK).json({
       success: true,

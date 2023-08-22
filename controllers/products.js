@@ -95,13 +95,7 @@ export const get = async (req, res) => {
     const result = await products.aggregate([
       {
         $match: {
-          sell: true,
-
-          $or: [
-            { name: new RegExp(req.query.search, 'i') },
-            { description: new RegExp(req.query.search, 'i') },
-            { category: new RegExp(req.query.search, 'i') }
-          ]
+          sell: true
         }
       },
       {
@@ -110,13 +104,22 @@ export const get = async (req, res) => {
           localField: 'user',
           foreignField: '_id',
           pipeline: [
-            { $match: { nickname: new RegExp(req.query.search, 'i') } },
             { $project: { nickname: 1 } }
           ],
           as: 'user'
         }
       },
       { $unwind: { path: '$user' } },
+      {
+        $match: {
+          $or: [
+            { 'user.nickname': new RegExp(req.query.search, 'gi') },
+            { name: new RegExp(req.query.search, 'gi') },
+            { description: new RegExp(req.query.search, 'gi') },
+            { category: new RegExp(req.query.search, 'gi') }
+          ]
+        }
+      },
       { $sort: { date: req.query.sortOrder === 'asc' ? 1 : -1 } },
       {
         $facet: {
@@ -125,6 +128,8 @@ export const get = async (req, res) => {
         }
       }
     ])
+    // console.log(JSON.stringify(result, null, 2))
+
     // let result = await products
     //   .find({
     //     sell: true,
@@ -168,12 +173,13 @@ export const get = async (req, res) => {
     // } else {
     //   count = Math.ceil(count / req.query.productsPerPage)
     // }
+    // console.log(JSON.stringify(result, null, 2))
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
       result: {
-        data: result[0].sample,
-        count: Math.ceil(result[0].count[0].count / req.query.productsPerPage)
+        data: result[0]?.sample || [],
+        count: Math.ceil((result[0]?.count?.[0]?.count || 1) / req.query.productsPerPage)
       }
     })
   } catch (error) {

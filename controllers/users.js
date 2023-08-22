@@ -284,6 +284,7 @@ export const getCart = async (req, res) => {
 
 export const editCart = async (req, res) => {
   try {
+    console.log(req.body)
     // 尋找購物車有沒有存在該新增商品的賣家
     const idxSeller = req.user.cart.findIndex(cart => cart.seller.toString() === req.body.seller)
     // 如果有賣家
@@ -294,6 +295,8 @@ export const editCart = async (req, res) => {
       if (idx > -1) {
         // 先檢查修改後的數量
         const quantity = req.user.cart[idxSeller].productCart[idx].quantity + parseInt(req.body.quantity)
+        const productNumber = await products.findById(req.body.product)
+        console.log(productNumber.MaxNumber)
         if (quantity <= 0) {
           // 小於 0 ，移除
           req.user.cart[idxSeller].productCart.splice(idx, 1)
@@ -301,8 +304,10 @@ export const editCart = async (req, res) => {
           if (req.user.cart[idxSeller].productCart.length <= 0) {
             req.user.cart.splice(idxSeller, 1)
           }
+        } else if (quantity > productNumber.MaxNumber) {
+          console.log('jere')
+          throw new Error('NOT ENOUGH')
         } else {
-          // 大於 0 ，修改
           req.user.cart[idxSeller].productCart[idx].quantity = quantity
         }
       } else {
@@ -356,15 +361,20 @@ export const editCart = async (req, res) => {
 
     })
   } catch (error) {
-    if (error.name === 'NOT FOUND') {
+    if (error.message === 'NOT FOUND') {
       res.status(StatusCodes.NOT_FOUND).json({
         success: false,
         message: '找不到商品'
       })
-    } else if (error.name === 'NO USER') {
+    } else if (error.message === 'NO USER') {
       res.status(StatusCodes.NOT_FOUND).json({
         success: false,
         message: '找不到賣家'
+      })
+    } else if (error.message === 'NOT ENOUGH') {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: '新增數量大於商品剩餘數量'
       })
     } else if (error.name === 'ValidationError') {
       res.status(StatusCodes.BAD_REQUEST).json({
@@ -372,6 +382,7 @@ export const editCart = async (req, res) => {
         message: getMessageFromValidationError(error)
       })
     } else {
+      console.log(error)
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         success: false,
         message: '發生錯誤'

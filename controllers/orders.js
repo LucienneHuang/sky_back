@@ -3,10 +3,12 @@ import nodemailer from 'nodemailer'
 import { getMessageFromValidationError } from '../utils/error.js'
 import orders from '../models/oders.js'
 import users from '../models/users.js'
+import products from '../models/products.js'
 
 export const create = async (req, res) => {
   try {
     // 檢查購物車是不是空的
+    console.log(req.body)
     if (req.user.cart.length === 0) {
       throw new Error('EMPTY')
     }
@@ -28,6 +30,19 @@ export const create = async (req, res) => {
       // 建立訂單
       for (const miniCart in user.cart) {
         const sum = user.cart[miniCart].productCart.reduce((total, current) => total + (current.quantity * current.product.price), 0)
+        for (const product of user.cart[miniCart].productCart) {
+          if ((product.product.MaxNumber - product.quantity === 0)) {
+            await products.findByIdAndUpdate(product.product._id, {
+              MaxNumber: (product.product.MaxNumber - product.quantity),
+              sell: false
+            })
+          } else {
+            await products.findByIdAndUpdate(product.product._id, {
+              MaxNumber: (product.product.MaxNumber - product.quantity)
+            })
+          }
+        }
+
         const result = await orders.create({
           user: user._id,
           seller: user.cart[miniCart].seller,

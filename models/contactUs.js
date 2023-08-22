@@ -9,7 +9,6 @@ const schema = new Schema({
   email: {
     type: String,
     required: [true, '缺少信箱'],
-    unique: true,
     validate: {
       validator (value) {
         return validator.isEmail(value)

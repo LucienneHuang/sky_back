@@ -9,20 +9,26 @@ import nodemailer from 'nodemailer'
 export const register = async (req, res) => {
   try {
     const result = await users.create(req.body)
-    console.log(req.body.email)
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 465,
       auth: {
-        user: 'skyclub.202308@gmail.com',
-        pass: 'rbcelquzumfcceqg'
+        user: `${process.env.EMAIL_ACCOUNT}`,
+        pass: `${process.env.EMAIL_PASSWORD}`
       }
     })
     transporter.sendMail({
-      from: 'skyclub.202308@gmail.com',
+      from: `${process.env.EMAIL_ACCOUNT}`,
       to: `${req.body.email}`,
-      subject: 'Sky Club | 註冊 Email 確認信',
-      html: '輸入信件內容'
+      subject: 'Sky Club | 註冊確認信',
+      html: `<div>
+      <div style="font-size: 2rem;">Sky Club 註冊通知信</div>
+      <hr>
+      <div style="font-size: 1.1rem;font-weight: 600;">尊敬的用戶您好，歡迎您註冊 <a
+          href="https://luciennehuang.github.io/SkyClub/#/">Sky Club</a>。</div><br>
+      <div style="font-size: 1rem;font-weight: 600;">您的會員帳戶已建立，即日起您可以透過 Email 登入，並且能使用交易功能。<br>如果有任何疑問，歡迎<a
+          href="https://luciennehuang.github.io/SkyClub/#/contact">聯絡我們</a>。<br>Sky Club 祝您有美好的一天。</div>
+    </div>`
     }).then(info => {
       console.log({ info })
     }).catch(console.error)

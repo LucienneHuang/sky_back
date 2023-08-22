@@ -92,40 +92,88 @@ export const getOwn = async (req, res) => {
 // 給前端看的，get 只找有上架的東西
 export const get = async (req, res) => {
   try {
-    // sell: true 設定只有在架上的東西
-    const result = await products
-      .find({
-        sell: true,
-        $or: [
-          { name: new RegExp(req.query.search, 'i') },
-          { description: new RegExp(req.query.search, 'i') },
-          { category: new RegExp(req.query.search, 'i') }
-        ]
-      })
-      .populate('user', 'nickname')
-      .sort({ date: req.query.sortOrder === 'asc' ? 1 : -1 })
-      .skip((req.query.currentPage - 1) * req.query.productsPerPage)
-      .limit(req.query.productsPerPage)
-    let count = await products.find({
-      sell: true,
-      $or: [
-        { name: new RegExp(req.query.search, 'i') },
-        { description: new RegExp(req.query.search, 'i') },
-        { category: new RegExp(req.query.search, 'i') }
-      ]
-    }).count()
-    // 檢查 nickname，待改
-    if (count % req.query.productsPerPage === 0) {
-      count = Math.floor(count / req.query.productsPerPage)
-    } else {
-      count = Math.ceil(count / req.query.productsPerPage)
-    }
+    const result = await products.aggregate([
+      {
+        $match: {
+          sell: true,
+
+          $or: [
+            { name: new RegExp(req.query.search, 'i') },
+            { description: new RegExp(req.query.search, 'i') },
+            { category: new RegExp(req.query.search, 'i') }
+          ]
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user',
+          foreignField: '_id',
+          pipeline: [
+            { $match: { nickname: new RegExp(req.query.search, 'i') } },
+            { $project: { nickname: 1 } }
+          ],
+          as: 'user'
+        }
+      },
+      { $unwind: { path: '$user' } },
+      { $sort: { date: req.query.sortOrder === 'asc' ? 1 : -1 } },
+      {
+        $facet: {
+          count: [{ $count: 'count' }],
+          sample: [{ $skip: parseInt((req.query.currentPage - 1) * req.query.productsPerPage) }, { $limit: parseInt(req.query.productsPerPage) }]
+        }
+      }
+    ])
+    // let result = await products
+    //   .find({
+    //     sell: true,
+    //     $or: [
+    //       { name: new RegExp(req.query.search, 'i') },
+    //       { description: new RegExp(req.query.search, 'i') },
+    //       { category: new RegExp(req.query.search, 'i') }
+    //     ]
+    //   })
+    //   .populate('user', 'nickname')
+    //   .sort({ date: req.query.sortOrder === 'asc' ? 1 : -1 })
+    //   .skip((req.query.currentPage - 1) * req.query.productsPerPage)
+    //   .limit(req.query.productsPerPage)
+    // let count = await products.find({
+    //   sell: true,
+    //   $or: [
+    //     { name: new RegExp(req.query.search, 'i') },
+    //     { description: new RegExp(req.query.search, 'i') },
+    //     { category: new RegExp(req.query.search, 'i') }
+    //   ]
+    // }).count()
+    // if (result.length === 0) {
+    //   result = await products
+    //     .find({
+    //       sell: true
+    //     })
+    //     .populate('user', 'nickname')
+    //     .sort({ date: req.query.sortOrder === 'asc' ? 1 : -1 })
+    //   result = result.filter((data) => data.user.nickname.indexOf(req.query.search) > -1)
+    //   count = result.length
+    //   const result2 = []
+    //   for (let i = ((req.query.currentPage - 1) * req.query.productsPerPage); i < ((req.query.currentPage - 1) * req.query.productsPerPage + 9); i++) {
+    //     if (typeof result[i] !== 'undefined') {
+    //       result2.push(result[i])
+    //     }
+    //   }
+    //   result = result2
+    // }
+    // if (count % req.query.productsPerPage === 0) {
+    //   count = Math.floor(count / req.query.productsPerPage)
+    // } else {
+    //   count = Math.ceil(count / req.query.productsPerPage)
+    // }
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
       result: {
-        data: result,
-        count
+        data: result[0].sample,
+        count: Math.ceil(result[0].count[0].count / req.query.productsPerPage)
       }
     })
   } catch (error) {

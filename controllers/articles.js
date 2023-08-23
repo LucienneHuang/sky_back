@@ -86,7 +86,7 @@ export const getNews = async (req, res) => {
         { description: new RegExp(req.query.search, 'i') }
       ]
     }).sort({ date: req.query.sortOrder === 'asc' ? 1 : -1 }).skip((req.query.currentPage - 1) * req.query.articlesPerPage).limit(req.query.articlesPerPage)
-    let count = await articles.find({
+    const count = await articles.find({
       category: '最新消息',
       display: true,
       $or: [
@@ -94,17 +94,13 @@ export const getNews = async (req, res) => {
         { description: new RegExp(req.query.search, 'i') }
       ]
     }).count()
-    if (count % 5 === 0) {
-      count = Math.floor(count / req.query.articlesPerPage)
-    } else {
-      count = Math.ceil(count / req.query.articlesPerPage)
-    }
+
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
       result: {
         data: result,
-        count
+        count: Math.ceil(count / req.query.articlesPerPage)
       }
     })
   } catch (error) {

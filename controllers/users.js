@@ -82,9 +82,6 @@ export const register = async (req, res) => {
                       style="width:100%;border-collapse:collapse;border:0;border-spacing:0;font-size:9px;font-family:Arial,sans-serif;">
                       <tr>
                         <td style="padding:0;width:50%;" align="left">
-                          <p style="margin:0;font-size:14px;line-height:32px;font-family:Arial,sans-serif;color:#ffffff;">
-                            泰山網頁設計青年專班 黃蔓渝 2023 <br />
-                          </p>
                         </td>
                         <td style="padding:0;width:50%;" align="right">
                           <table role="presentation" style="border-collapse:collapse;border:0;border-spacing:0;">

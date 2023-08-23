@@ -21,14 +21,93 @@ export const register = async (req, res) => {
       from: `${process.env.EMAIL_ACCOUNT}`,
       to: `${req.body.email}`,
       subject: 'Sky Club | 註冊確認信',
-      html: `<div>
-      <div style="font-size: 2rem;">Sky Club 註冊通知信</div>
-      <hr>
-      <div style="font-size: 1.1rem;font-weight: 600;">尊敬的用戶您好，歡迎您註冊 <a
-          href="https://luciennehuang.github.io/SkyClub/#/">Sky Club</a>。</div><br>
-      <div style="font-size: 1rem;font-weight: 600;">您的會員帳戶已建立，即日起您可以透過 Email 登入，並且能使用交易功能。<br>如果有任何疑問，歡迎<a
-          href="https://luciennehuang.github.io/SkyClub/#/contact">聯絡我們</a>。<br>Sky Club 祝您有美好的一天。</div>
-    </div>`
+      html: `<!DOCTYPE html>
+      <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office">
+      
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <meta name="x-apple-disable-message-reformatting">
+        <title></title>
+        <!--[if mso]>
+        <noscript>
+          <xml>
+            <o:OfficeDocumentSettings>
+              <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+          </xml>
+        </noscript>
+        <![endif]-->
+        <style>
+          table,
+          td,
+          div,
+          h1,
+          p {
+            font-family: Arial, sans-serif;
+          }
+        </style>
+      </head>
+      
+      <body style="margin:0;padding:0;">
+        <table role="presentation" style="width:100%;border-collapse:collapse;border:0;border-spacing:0;background:#ffffff;">
+          <tr>
+            <td align="center" style="padding:0;">
+              <table role="presentation"
+                style="width:602px;border-collapse:collapse;border:1px solid #cccccc;border-spacing:0;text-align:left;">
+                <tr>
+                  <td align="center">
+                    <img src="https://res.cloudinary.com/dymjlgamb/image/upload/v1692753206/front_swqxyh.png" width="300"
+                      style="width: 100%;height:100%;display:block;object-fit: cover;" />
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:36px 30px 0px 30px;">
+                    <table role="presentation" style="width:100%;border-collapse:collapse;border:0;border-spacing:0;">
+                      <tr>
+                        <td style="padding:0 0 36px 0;color:#153643;">
+                          <h1 style="font-size:24px;margin:0 0 20px 0;font-family:Arial,sans-serif;">您好，歡迎您註冊 <a
+                              href="https://luciennehuang.github.io/SkyClub/#/">Sky Club</a> </h1>
+                          <p style="margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;">
+                            您的會員帳戶已建立，即日起您可以透過 Email 登入，並使用交易功能。<br>
+                            如果有任何疑問，歡迎 <a href="https://luciennehuang.github.io/SkyClub/#/contact">聯絡我們</a> 。</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 20px 10px 20px;background:#092861;">
+                    <table role="presentation"
+                      style="width:100%;border-collapse:collapse;border:0;border-spacing:0;font-size:9px;font-family:Arial,sans-serif;">
+                      <tr>
+                        <td style="padding:0;width:50%;" align="left">
+                          <p style="margin:0;font-size:14px;line-height:32px;font-family:Arial,sans-serif;color:#ffffff;">
+                            泰山網頁設計青年專班 黃蔓渝 2023 <br />
+                          </p>
+                        </td>
+                        <td style="padding:0;width:50%;" align="right">
+                          <table role="presentation" style="border-collapse:collapse;border:0;border-spacing:0;">
+                            <tr>
+                              <td style="padding:0 0 0 10px;width:38px;">
+                                <a href="https://luciennehuang.github.io/SkyClub/#/" style="color:#ffffff;"><img
+                                    src="https://res.cloudinary.com/dymjlgamb/image/upload/v1692752542/sky-logo-white_tl8ufk.png"
+                                    alt="SkyClub" width="40" style="height:auto;display:block;border:0;" /></a>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+      
+      </html>`
     })
     res.status(StatusCodes.OK).json({
       success: true,

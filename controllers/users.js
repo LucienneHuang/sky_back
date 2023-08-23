@@ -360,7 +360,6 @@ export const getCart = async (req, res) => {
 
 export const editCart = async (req, res) => {
   try {
-    console.log(req.body)
     // 尋找購物車有沒有存在該新增商品的賣家
     const idxSeller = req.user.cart.findIndex(cart => cart.seller.toString() === req.body.seller)
     // 如果有賣家
@@ -372,7 +371,6 @@ export const editCart = async (req, res) => {
         // 先檢查修改後的數量
         const quantity = req.user.cart[idxSeller].productCart[idx].quantity + parseInt(req.body.quantity)
         const productNumber = await products.findById(req.body.product)
-        console.log(productNumber.MaxNumber)
         if (quantity <= 0) {
           // 小於 0 ，移除
           req.user.cart[idxSeller].productCart.splice(idx, 1)
@@ -380,8 +378,7 @@ export const editCart = async (req, res) => {
           if (req.user.cart[idxSeller].productCart.length <= 0) {
             req.user.cart.splice(idxSeller, 1)
           }
-        } else if (quantity > productNumber.MaxNumber) {
-          console.log('jere')
+        } else if ((quantity > productNumber.MaxNumber) && (quantity > req.user.cart[idxSeller].productCart[idx].quantity)) {
           throw new Error('NOT ENOUGH')
         } else {
           req.user.cart[idxSeller].productCart[idx].quantity = quantity

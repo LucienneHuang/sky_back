@@ -241,7 +241,6 @@ export const editOwnProduct = async (req, res) => {
         newArray.push(element.path)
       })
     }
-    console.log(newArray)
     const result = await products.findByIdAndUpdate(req.params.id, {
       user: req.body.user,
       name: req.body.name,
@@ -264,6 +263,47 @@ export const editOwnProduct = async (req, res) => {
     })
   } catch (error) {
     console.log(error)
+    if (error.name === 'ValidationError') {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: getMessageFromValidationError(error)
+      })
+    } else if (error.name === 'CastError') {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: '格式錯誤'
+      })
+    } else if (error.message === 'NOT FOUND') {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: '找不到'
+      })
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: '發生錯誤'
+      })
+    }
+  }
+}
+export const editBlockUserProduct = async (req, res) => {
+  try {
+    console.log('here')
+    console.log(req.params.id)
+    console.log(req.body.sell)
+    const result = await products.findByIdAndUpdate(req.params.id, {
+      sell: req.body.sell
+    }, { new: true, runValidators: true })
+    console.log('here2')
+    if (!result) {
+      throw new Error('NOT FOUND')
+    }
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+      result
+    })
+  } catch (error) {
     if (error.name === 'ValidationError') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,

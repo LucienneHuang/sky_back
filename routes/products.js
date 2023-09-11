@@ -3,7 +3,7 @@ import { Router } from 'express'
 import * as auth from '../middlewares/auth.js'
 import upload from '../middlewares/upload.js'
 import contentType from '../middlewares/contentType.js'
-import { create, getAll, getOwn, get, getId, editOwnProduct, getUserProducts } from '../controllers/products.js'
+import { create, getAll, getOwn, get, getId, editOwnProduct, getUserProducts, editBlockUserProduct } from '../controllers/products.js'
 import admin from '../middlewares/admin.js'
 
 const router = Router()
@@ -24,5 +24,7 @@ router.get('/user/:id', getUserProducts)
 
 // 編輯/更新
 router.patch('/:id', auth.jwt, contentType('multipart/form-data'), upload, editOwnProduct)
+// 停權下架
+router.patch('/block/:id', auth.jwt, contentType('multipart/form-data'), upload, editBlockUserProduct)
 
 export default router

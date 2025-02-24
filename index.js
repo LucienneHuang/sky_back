@@ -20,7 +20,7 @@ app.use(cors({
   // callback(錯誤, 是否允許請求)
   origin (origin, callback) {
     // undefined 可能來自於 postman
-    if (origin === undefined || origin.includes('github') || origin.includes('localhost')) {
+    if (origin === undefined || origin.includes('myhuang') || origin.includes('localhost')) {
       // 允許
       callback(null, true)
     } else {
